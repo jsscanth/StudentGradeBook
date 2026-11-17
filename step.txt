@@ -1,0 +1,25 @@
+# show menu
+'''
+====== GRADE BOOK ======
+1. Add Student
+2. Add Grade for A Student
+3. View Student Report -> shows all grades, the average, the highest, the lowest and a letter grade (A ≥ 90, B ≥ 80, C ≥ 70, D ≥ 60, otherwise F).
+4. View Class Summary -> class average, top student, and a ranked list from highest to lowest average.
+5. Exit
+Student list:
+'''
+# ask option from user 
+# create a global empty book{}
+# if '': show menu again
+# if 1: receive input from user. Clean the input. Type check the input (cannot be number, cannot be same with existing name). Enter to exit. Input passed -> add to book.
+# if 2: book cannot be empty. if book not empty ask name from user. Type check name. If not pass ask again, if pass ask grade. Type check grade -> cannot be less than 0 or more than 100. If not pass ask again, if pass add grade to book. Pressing enter always bring user back to menu.
+# if 3: if book empty alert user, back to menu. if book not empty, copy book to a new book dict, then: 
+# case 1: one or more student have no grade -> no grade student have 0 as their grade
+# case 2: show all grade from new book dict
+# case 3: show average -> loop only 'value' from new book dict. Count the average of said list and append it to a new list.
+# case 4: The highest and lowest from the new average list -> loop the average list and check its correct letter grade.
+# if 4: if book empty alert user, back to menu. if book not empty, copy book to a new book dict, then:
+# case 1: one or more student have no grade -> no grade student have 0 as their grade
+# case 2: class average -> loop book to copy it to a new book dict. get student average (copy the code from case 3), put it to a average list. Get average of average list. 
+# case 3: top student -> highest score
+# Case 4: ranked list from highest to lowest average. 
