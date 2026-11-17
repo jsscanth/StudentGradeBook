@@ -1,171 +1,213 @@
 from decimal import Decimal, InvalidOperation
-import math
 
-def menu(): # showing menu
-    option = 0
-    while True:
-        print("====== Grade Book ======")
-        print("1. Add student")
-        print("2. Add grade for a student")
-        print("3. View student report")
-        print("4. View class summary")
-        print("5. Exit")
-        try:
-            option = int(input("Choose an option: "))
-            if option < 1 or option > 5:
-                print("Enter the correct number of option")
-                continue
-            else:
-                break
-        except ValueError:
-            print("Enter the correct option from menu.")  
-    return option   
-    
 
-def main():
-    book = {} # where the name and grades are stored
-    average_dict = {} # where the name and average of grades are stored
-    all_average_grade = [] # where all average grade of the class is stored
-    average_list = [] # where only average is contained
-    name = "" # to store name temporarily
-    grade = 0 # to store grade temporarily
-    
-    while True: # keep the program running until option 5 quit is executed.
-        option = menu()
-        if option == 5:
-            break
-        
-        elif option == 1:
-            while True:
-                name = input("Enter student name (type 101 exit): ").lower().strip()
-                if name == "101":
-                    break
-                elif name.isnumeric(): # check if the given name is number 
-                    print("Name cannot be number")
-                elif name in book: # check if the name already exist
-                    print(f"{name.capitalize()} already exist")
-                else:
-                    book[name] = [] # assign the name to book record.
-                    break
-            
-            print(f"List of name so far:")
-            for key, value in book.items():
-                print(f"- {key}: {value}")
-                    
-        elif option == 2:
-            while True: # keep the input running until the name is found.
-                name = input("Enter student name: ").lower().strip()
-                if name not in book:
-                    print("Name cannot be found.")
-                    continue
-                else: break
-            while True: # keep the input running until the input grade is right.
-                try:
-                    grade = Decimal(input("Enter student grade (type 101 to exit): "))
-                    if not grade.is_finite():
-                        print("Enter the correct grade.")
-                        continue
-                    if grade == 101: 
-                        break
-                    elif grade < 0 or grade > 100:
-                        print("Enter the correct grade.")
-                        continue
-                    else: book[name].append(grade)
+def get_letter_grade(grade: Decimal):
+    """Getting the letter grade based on student average grade.
 
-                except (ValueError, InvalidOperation):
-                    print("Enter the right name and grade")
-            
-        elif option == 3:
-            print("====== All Grades ======")
-            for x, y in book.items(): # showing all grades
-                print(f"{x.capitalize()}: {[float(z) for z in y]}")
-            print("-----------------------")
-            print("====== Average ======")
-            for name, grade in book.items(): # show name and average grade of name.
-                average_dict[name] = get_average(grade) # keeping the average to another dictionary.
-                print(f"{name.capitalize()}: {average_dict[name]: .2f}")
-            print("=====================")
-            
-            average_list = [grade for grade in average_dict.values()] # store list of average grades only
-            highest = highest_grade(average_list) # store the highest grade
-            lowest = lowest_grade(average_list) # store the lowest grade
-            highest_name_list = [key for key, value in average_dict.items() if value == highest] # store the name of student with highest grade
-            lowest_name_list = [key for key, value in average_dict.items() if value == lowest] # store the name of students with lowest grade
-            for name in highest_name_list:
-                print(f"Highest Average Grade   {name}: {highest: .2f}")
-            
-            for name in lowest_name_list:
-                print(f"Lowest Average Grade    {name}: {lowest: .2f}")           
-            
-            print("====== Letter Grades ======")
-            for name, grade in average_dict.items():
-                print(f"{name}: {letter_grade(grade)}")
-            print("===========================")
-            
-            # for name, grade in book.items():
-            #     print("For loop is good")
-            #     print(f"{name.capitalize()}: {str(grade)}")
-                
-        elif option == 4:
-            # Show class average
-            if average_dict == []:
-                print("Choose option 3 first to count student average")
-            else:
-                for grade in average_dict.values():
-                    all_average_grade.append(grade)
-                average_class = get_average(all_average_grade)
-                print(f"Class average: {average_class}")
-                
-                # show highest class average
-                highest = highest_grade(average_list) # store the highest grade
-                print(f"Highest grade: {highest}")
-                
-                # list all average score sequencely from highest to lowest
-                print("Highest Average to Lowest")
-                for grade in average_list:
-                    for name in average_dict.keys():
-                        if average_dict[name] == grade:
-                            print(f"{name.capitalize()}: {grade: .2f}")
-                    
-                
-            
-            
-            
+    Args:
+        grade (decimal): student average grade
 
-def get_average(grades):
-    return math.fsum(grades)/len(grades)
-
-def highest_grade(grades):
-    return max(grades)
-
-def lowest_grade(grades):
-    return min(grades)
-
-def letter_grade(grades):
-    if grades >= Decimal("90"):
+    Returns:
+        _type_: string of letter grade.
+    """
+    if grade >= Decimal("90"):
         return "A"
-    elif grades >= Decimal("80"):
+    elif grade >= Decimal("80"):
         return "B"
-    elif grades >= Decimal("70"):
+    elif grade >= Decimal("70"):
         return "C"
-    elif grades >= Decimal("60"):
+    elif grade >= Decimal("60"):
         return "D"
     else: return "F"
+
+def get_average(grades: list):
+    """Calculate average of student's grade and return the average.
+
+    Args:
+        grades (list): list of grade.
+
+    Returns:
+        _type_: Decimal
+    """
+    n = Decimal('0')
+    for grade in grades:
+        n += grade
+        
+    return n/len(grades) 
+
+def type_check_grade(grade: Decimal):
+    """Making sure the grade is in between of 0 and 100
+
+    Args:
+        grade (int): _description_
+        
+    Returns:
+        type: 
+    """
+    if grade < 0:
+        return "Grade is less than 0"
+    elif grade > 100:
+        return "Grade is more than 100"
+
+def add_grade(book:dict, name:str, grade: str):
+    """Adding grade to book.
+
+    Args:
+        book (dict): copy of current book
+        name (str): name of student
+        grade (int): grade of student
+
+    Returns:
+        _type_: dictionary of book after grade is written
+    """
+    book[name].append(Decimal(grade))
+    return book
+
+def type_check_name(book:dict, name: str):
+    """Checking the current situation of name in book. Whether name is exist or not and making sure that name cannot be number.
+
+    Args:
+        book (dict): copy of current book 
+        name (str): input of the name
+
+    Returns:
+        _type_: string
+    """
+    if name.isnumeric():
+        return "Name is number(s)"
+    elif name in book:
+        return "Name is already exist"
+    else:
+        return "Name is not exist"
     
 
+def add_student(book: dict, name: str):
+    book[name] = []
+    return book    
 
-if __name__ == "__main__":
+def main():
+    book = {}
+    option = 0
+    while option != 5:
+        print("====== GRADE BOOK ======")
+        print("1. Add Student")
+        print("2. Add Grade for A Student")
+        print("3. View Student Report")
+        print("4. View Class Summary")
+        print("5. Exit")
+        print("Student list:")
+        print(f"{book}")
+        
+        try:
+            option = int(input("Enter your option >>> ").strip())
+            if option < 1 or option > 5:
+                print("Enter the correct option >>> ")
+                continue
+        except ValueError:
+            print("Enter the correct option >>> ")
+            continue
+            
+        if option == 1:
+            while True:
+                name = ""
+                try:
+                    name = input("Enter student name: ").lower().strip()
+                    if name == "":
+                        break
+                    else:
+                        check = type_check_name(book, name)
+                        if check == "Name is number(s)":
+                            print("Enter new name. Name cannot be number.")
+                        elif check == "Name is already exist":
+                            print("Enter new name. Name already exist.")
+                        elif check == "Name is not exist":
+                            book = add_student(book, name) 
+                            print(book)
+                            break
+                except (ValueError, TypeError):
+                    print("Enter the correct name")
+                    continue
+        elif option == 2:
+            while True:
+                if not book:
+                    print("Book grade is empty.")
+                    break
+                else:
+                    try:
+                        name = input("Enter student name: ").lower().strip()
+                        check = type_check_name(book, name)
+                        if name == "":
+                            break
+                        elif check == "Name is number(s)":
+                            print("Enter the right name. Name cannot be number.")
+                        elif check == "Name is not exist":
+                            print("Please enter name again. Name is not exist")
+                        elif check == "Name is already exist":
+                            while True:
+                                try:
+                                    grade = input("Enter student grade: ").strip()
+                                    if grade == "":
+                                        break
+                                    check = type_check_grade(Decimal(grade))
+                                    if check == "Grade is less than 0":
+                                        print("Grade cannot be less than zero. Please enter student grade again")
+                                    elif check == "Grade is more than 100":
+                                        print("Grade cannot be more than 100. Please enter student grade again.")
+                                    else:
+                                        book = add_grade(book, name, grade)
+                                except(ValueError, InvalidOperation):
+                                    print("Please enter the right grade.")
+                    except (ValueError, TypeError):
+                        print("Enter the right name.")
+        elif option == 3:
+            if not book:
+                print("Grade book is empty.")
+            else:
+                for name, grade in book.items():
+                    if grade:
+                        print(f"{name.capitalize()}: {[float(value) for value in grade]}")
+                    else:
+                        print(f"{name.capitalize()}: No grades yet.")
+                average_book = {name:get_average(grade) for name, grade in book.items() if grade}
+                average_list = []
+                # checking student grade and getting its average
+                for name, grade in average_book.items():
+                    average_list.append(grade)
+                # Show the highest and lowest of average grade
+                for name, grade in average_book.items():
+                    if grade == max(average_list):
+                        print(f"Highest average grade: {name.capitalize()}   {grade:.2f}")
+                    if grade == min(average_list):
+                        print(f"Lowest average grade: {name.capitalize()}    {grade:.2f}")
+                # Show the letter grade of after the average grade.
+                print("Average Letter Grade")
+                for name, grade in average_book.items():
+                    print(f"{name.capitalize()}: {get_letter_grade(grade)}")
+        elif option == 4:
+            if not book:
+                print("Grade book is empty")
+            else:
+                average_book = {name:get_average(grade) for name, grade in book.items() if grade}
+                average_list = []
+                if not average_book:
+                    print("No grades yet.")
+                else:
+                    # checking student grade and getting its average
+                    for name, grade in average_book.items():
+                        average_list.append(grade)
+                    # Getting class average
+                    class_average = get_average(average_list)
+                    print(f"Class average: {class_average:.2f}")
+                    # Top student
+                    for name, grade in average_book.items():
+                        if grade == max(average_list):
+                            print(f"Top student: {name.capitalize()} {grade:.2f}")
+                    # ranking
+                    print("Class Rank")
+                    ranked = sorted(average_book.items(), key= lambda pair:pair[1], reverse=True)
+                    for key, value in ranked:
+                        print(f"{key.capitalize()}: {value:.2f}")
+            
+    
+if __name__ == "__main__":   
     main()
-    
-
-'''
-notes:
-[v] fix option 2. can the variable 'name' be really used outside while loop?
-[v] can option 2 receive more than one grades at once? using while loop until the user input 101 to exit the loop?
-[v] option 3: how to show grades without 'Decimal' show up as an output
-[v] option 3: how to show list without '[]' around the values.
-[v] option 4: finish it
-[v] option 4: store all grade in a single variable and count its average
-[v] option 4: show highest class average
-[v] option 4: list the average score form highest to lowest
-'''
